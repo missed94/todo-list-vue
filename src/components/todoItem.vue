@@ -1,8 +1,16 @@
 <template>
-  <li class="todoItem">
+  <li
+    class="todoItem"
+    :class="{checked: todo.checked}"
+  >
     <div class="view">
       <label class="label">
-        <input type="checkbox" class="toggle">
+        <input
+          type="checkbox"
+          class="toggle"
+          @change="checkTodo"
+          :checked="todo.checked"
+        >
         <p class="todoName">{{todo.todoName}}</p>
       </label>
       <button
@@ -25,6 +33,13 @@
     methods: {
       removeTodo() {
         this.$emit('removeTodo', this.todo.id)
+      },
+      checkTodo(e) {
+        const todoItem = {
+          ...this.todo,
+          checked: e.target.checked
+        }
+        this.$emit('checkTodo', todoItem)
       }
     }
 
@@ -47,6 +62,11 @@
         visibility: visible;
       }
     }
+  }
+
+  .checked .todoName{
+    text-decoration: line-through;
+    color: #dcdcdc;
   }
 
   .view {

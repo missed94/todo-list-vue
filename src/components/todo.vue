@@ -1,13 +1,18 @@
 <template>
   <div>
-    <pre>{{todos}}</pre>
+    <!--<pre>{{todos}}</pre>-->
     <div class="todo">
       <todo-input
         @addTodo="addTodo"
       />
       <todo-list
-        :todos="todos"
+        :defaultTodos="todos"
+        :todos="filteredTodos"
         @removeTodo="removeTodo"
+        @checkTodo="checkTodo"
+        @filterTodos="filterTodos"
+        @checkAll="checkAll"
+        @clearChecked="clearChecked"
       />
     </div>
   </div>
@@ -24,15 +29,52 @@
     data() {
       return {
         todos: [],
+        filter:"all",
+        checkedAll: false,
       }
+    },
+    computed: {
+      filteredTodos() {
+        switch (this.filter) {
+          case "all": {
+            return this.todos
+          }
+          case "active": {
+            return this.todos.filter(todo => !todo.checked)
+          }
+          case "completed": {
+            return this.todos.filter(todo => todo.checked)
+          }
+        }
+      },
     },
     methods: {
       addTodo(todo) {
         this.todos.push(todo)
       },
       removeTodo(id) {
-        console.log(id);
         this.todos = this.todos.filter(todo => todo.id !== id)
+      },
+      checkTodo(todoItem) {
+        this.todos = this.todos.map((todo) => {
+          if (todo.id === todoItem.id) {
+            return todoItem
+          }
+          return todo
+        })
+      },
+      filterTodos(filter) {
+        this.filter = filter
+      },
+      checkAll() {
+        this.checkedAll = !this.checkedAll
+        this.todos = this.todos.map((todo) => {
+          this.checkedAll ? todo.checked = true : todo.checked = false
+          return todo
+        })
+      },
+      clearChecked() {
+        this.todos = this.todos.filter(todo => todo.checked !== true)
       }
     }
   }
