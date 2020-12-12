@@ -8,20 +8,28 @@
         <input
           type="checkbox"
           class="toggle"
-          @change="checkTodo"
+          @change="handleCheckTodo"
           :checked="todo.checked"
         >
         <p class="todoName">{{todo.todoName}}</p>
       </label>
+      <router-link
+        class="viewButton"
+        tag="button"
+        :to="`/view/${todo.todoName}`"
+      >&#10132</router-link>
       <button
         class="remove"
-        @click="removeTodo"
-      >x</button>
+        @click="handleRemoveTodo"
+      >&#10006
+      </button>
     </div>
   </li>
 </template>
 
 <script>
+  import {mapMutations} from "vuex";
+
   export default {
     name: 'todoItem',
     data() {
@@ -31,15 +39,16 @@
       todo: Object,
     },
     methods: {
-      removeTodo() {
-        this.$emit('removeTodo', this.todo.id)
+      ...mapMutations(['removeTodo', 'checkTodo']),
+      handleRemoveTodo() {
+        this.removeTodo(this.todo.id)
       },
-      checkTodo(e) {
+      handleCheckTodo(e) {
         const todoItem = {
           ...this.todo,
           checked: e.target.checked
         }
-        this.$emit('checkTodo', todoItem)
+        this.checkTodo(todoItem)
       }
     }
 
@@ -64,7 +73,7 @@
     }
   }
 
-  .checked .todoName{
+  .checked .todoName {
     text-decoration: line-through;
     color: #dcdcdc;
   }
@@ -72,6 +81,12 @@
   .view {
     display: flex;
     align-items: center;
+
+    &:hover {
+      .viewButton {
+        visibility: visible;
+      }
+    }
   }
 
   .label {
@@ -103,6 +118,21 @@
 
     &:hover {
       color: #af5b5e;
+    }
+  }
+
+  .viewButton {
+    visibility: hidden;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    color: #e6e6e6;
+    transition: color 0.2s ease-out;
+
+    &:hover {
+      color: #737373;
     }
   }
 </style>

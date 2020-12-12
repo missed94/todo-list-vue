@@ -1,7 +1,7 @@
 <template>
   <div id="todo-app">
     <div class="container">
-      <todo/>
+      <router-view/>
     </div>
   </div>
 </template>

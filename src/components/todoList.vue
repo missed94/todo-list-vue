@@ -6,7 +6,7 @@
       checkAllbtn_active: todos.every(todo => todo.checked === true),
       checkAllbtn_visibly: defaultTodos.length
     }"
-      @click="checkAll"
+      @click="handleToggleCheckAll"
     >❯
     </button>
     <ul class="list">
@@ -14,8 +14,6 @@
         v-for="todo in todos"
         :key="todo.id"
         :todo="todo"
-        @removeTodo="removeTodo"
-        @checkTodo="checkTodo"
       />
     </ul>
     <div class="footer" v-if="defaultTodos.length">
@@ -24,12 +22,12 @@
           {{todosLeft.length}} items left
         </div>
         <div class="filter">
-          <todo-filter @filterTodos="filterTodos"/>
+          <todo-filter/>
         </div>
         <button
           class="clearCheckedBtn"
           :class="{clearCheckedBtn_active: todos.some(todo => todo.checked === true)}"
-          @click="clearChecked"
+          @click="handleClearChecked"
         >Clear completed
         </button>
       </div>
@@ -40,12 +38,15 @@
 <script>
   import TodoFilter from "./todoFilter";
   import TodoItem from "./todoItem";
+  import {mapMutations} from "vuex";
 
   export default {
     name: 'todoList',
     components: {TodoItem, TodoFilter},
     data() {
-      return {}
+      return {
+        isCheckedAll: false,
+      }
     },
     props: {
       todos: Array,
@@ -57,21 +58,13 @@
       }
     },
     methods: {
-      removeTodo(id) {
-        this.$emit('removeTodo', id)
+      ...mapMutations(['toggleCheckAll', 'clearChecked']),
+      handleToggleCheckAll() {
+        this.isCheckedAll = !this.isCheckedAll
+        this.toggleCheckAll(this.isCheckedAll)
       },
-      checkTodo(todoItem) {
-        this.$emit('checkTodo', todoItem)
-      },
-      filterTodos(filter) {
-        this.$emit('filterTodos', filter)
-      },
-      checkAll() {
-        this.$emit('checkAll')
-      },
-      clearChecked() {
-        this.$emit('clearChecked')
-
+      handleClearChecked() {
+        this.clearChecked()
       }
     }
   }

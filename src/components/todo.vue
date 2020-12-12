@@ -1,18 +1,10 @@
 <template>
   <div>
-    <!--<pre>{{todos}}</pre>-->
     <div class="todo">
-      <todo-input
-        @addTodo="addTodo"
-      />
+      <todo-input/>
       <todo-list
         :defaultTodos="todos"
         :todos="filteredTodos"
-        @removeTodo="removeTodo"
-        @checkTodo="checkTodo"
-        @filterTodos="filterTodos"
-        @checkAll="checkAll"
-        @clearChecked="clearChecked"
       />
     </div>
   </div>
@@ -22,18 +14,20 @@
 <script>
   import TodoInput from "./todoInput";
   import TodoList from "./todoList";
+  import {mapState} from "vuex";
 
   export default {
     name: 'todo',
     components: {TodoList, TodoInput},
     data() {
       return {
-        todos: [],
-        filter:"all",
-        checkedAll: false,
       }
     },
     computed: {
+      ...mapState({
+        todos: state => state.todos.todos,
+        filter: state => state.todos.filter
+      }),
       filteredTodos() {
         switch (this.filter) {
           case "all": {
@@ -48,35 +42,6 @@
         }
       },
     },
-    methods: {
-      addTodo(todo) {
-        this.todos.push(todo)
-      },
-      removeTodo(id) {
-        this.todos = this.todos.filter(todo => todo.id !== id)
-      },
-      checkTodo(todoItem) {
-        this.todos = this.todos.map((todo) => {
-          if (todo.id === todoItem.id) {
-            return todoItem
-          }
-          return todo
-        })
-      },
-      filterTodos(filter) {
-        this.filter = filter
-      },
-      checkAll() {
-        this.checkedAll = !this.checkedAll
-        this.todos = this.todos.map((todo) => {
-          this.checkedAll ? todo.checked = true : todo.checked = false
-          return todo
-        })
-      },
-      clearChecked() {
-        this.todos = this.todos.filter(todo => todo.checked !== true)
-      }
-    }
   }
 </script>
 

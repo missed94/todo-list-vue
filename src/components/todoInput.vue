@@ -1,21 +1,35 @@
 <template>
+
   <div class="todoInput">
-    <input
-      class="input"
-      type="text"
-      placeholder="What needs to be done?"
-      autofocus="autofocus"
-      v-model="todo.todoName"
-      @keydown.enter="addTodo"
-    >
+    <div class="error">
+      {{ validation.firstError('todo.todoName') }}
+    </div>
+    <label>
+      <input
+        class="input"
+        type="text"
+        placeholder="What needs to be done?"
+        autofocus="autofocus"
+        v-model="todo.todoName"
+        @keydown.enter="addNewTodo"
+      >
+    </label>
   </div>
 </template>
 
 <script>
- let uniqId = 0
-
+  import {Validator} from 'simple-vue-validator'
+  import SimpleVueValidator from 'simple-vue-validator';
+  import {mapMutations} from "vuex";
+  let uniqId = 0
   export default {
     name: 'todoInput',
+    mixins:[SimpleVueValidator.mixin],
+    validators: {
+  'todo.todoName'(name) {
+    return Validator.value(name).required('Cannot be empty');
+  }
+    },
     data() {
       return {
         todo: {
@@ -26,11 +40,16 @@
       }
     },
     methods: {
-      addTodo() {
-        uniqId++
-        this.todo.id = uniqId
-        this.$emit('addTodo', {...this.todo})
-        this.todo.todoName = ""
+      ...mapMutations(['addTodo']),
+      addNewTodo() {
+        this.$validate().then(success => {
+          if (!success) return;
+          uniqId++
+          this.todo.id = uniqId
+          this.addTodo({...this.todo})
+          this.todo.todoName = ""
+          this.validation.reset()
+        })
       }
     }
   }
@@ -39,6 +58,7 @@
 <style lang="scss" scoped>
 
   .input {
+    position: relative;
     width: 100%;
     padding: 16px 16px 16px 60px;
     border: none;
@@ -54,5 +74,11 @@
       color: #dcdcdc;
       font-style: italic;
     }
+  }
+
+  .error {
+    position: absolute;
+    bottom: 100%;
+    color: #af5b5e;
   }
 </style>

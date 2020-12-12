@@ -5,7 +5,7 @@
       type="button"
       class="button"
       :class="{active: currentFilter === filter}"
-      @click="filterTodos(filter)"
+      @click="handleFilterTodos(filter)"
     >
       {{filter}}
     </button>
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+  import {mapMutations} from "vuex";
+
   export default {
     name: 'todoFilter',
     data() {
@@ -22,9 +24,10 @@
       }
     },
     methods: {
-      filterTodos(filter) {
+      ...mapMutations(['filterTodos']),
+      handleFilterTodos(filter) {
         this.currentFilter = filter
-        this.$emit('filterTodos', filter)
+        this.filterTodos(filter)
       }
     }
   }
