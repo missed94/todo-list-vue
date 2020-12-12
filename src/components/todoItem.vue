@@ -60,7 +60,6 @@
   .todoItem {
     position: relative;
     border-bottom: 1px solid #ededed;
-
     &:last-child {
       border-bottom: none;
 
@@ -94,6 +93,7 @@
     display: flex;
     align-items: center;
     flex: 1;
+    cursor: pointer;
   }
 
   .todoName {
